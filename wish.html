@@ -1,0 +1,297 @@
+<html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wish Generator 💖</title>
+
+<style>
+body {
+margin: 0;
+font-family: Arial;
+background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+overflow: hidden;
+}
+
+/* 💖 Watermark */
+.watermark {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%) rotate(-20deg);
+font-size: 250px;
+color: #ff4b6e;
+opacity: 0.08;
+pointer-events: none;
+z-index: 0;
+}
+
+.card {
+position: relative;
+z-index: 1;
+background: rgba(255,255,255,0.2);
+backdrop-filter: blur(10px);
+padding: 25px;
+border-radius: 20px;
+text-align: center;
+width: 90%;
+max-width: 420px;
+}
+
+.page { display: none; }
+.active { display: block; }
+
+input, select, textarea {
+width: 90%;
+padding: 10px;
+margin: 8px;
+border-radius: 10px;
+border: none;
+}
+
+button {
+padding: 10px 20px;
+border-radius: 20px;
+border: none;
+background: #ff4b6e;
+color: white;
+cursor: pointer;
+}
+
+/* Image */
+.final-img {
+width: 100%;
+max-height: 250px;
+object-fit: cover;
+border-radius: 20px;
+margin-bottom: 15px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Message */
+.final-msg {
+padding: 10px;
+line-height: 1.5;
+}
+
+/* Hearts */
+.heart {
+position: absolute;
+animation: floatUp 5s linear infinite;
+}
+@keyframes floatUp {
+0% { transform: translateY(100vh); }
+100% { transform: translateY(-10vh); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="watermark">💖</div>
+
+<script>
+setInterval(()=>{
+let h=document.createElement("div");
+h.className="heart";
+h.innerText="💖";
+h.style.left=Math.random()*100+"vw";
+document.body.appendChild(h);
+setTimeout(()=>h.remove(),5000);
+},400);
+</script>
+
+<div class="card">
+
+<!-- PAGE 1 -->
+<div class="page active" id="page1">
+<h2>Create Special Wish 💖</h2>
+
+<input type="text" id="sender" placeholder="Your Name">
+<input type="text" id="name" placeholder="Receiver Name">
+
+<select id="relation">
+<option>Bestie</option>
+<option>Girlfriend</option>
+<option>Boyfriend</option>
+<option>Wife</option>
+<option>Husband</option>
+<option>Mother</option>
+<option>Father</option>
+</select>
+
+<select id="occasion">
+<option>Birthday</option>
+<option>Anniversary</option>
+<option>Father's Day</option>
+<option>Mother's Day</option>
+</select>
+
+<textarea id="about" placeholder="Describe them (cute, caring, etc)"></textarea>
+
+<p>Select Photo 📸 (or paste link)</p>
+<input type="file" id="photoFile" accept="image/*">
+<p>OR</p>
+<input type="text" id="photoURL" placeholder="Paste image link (for sharing)">
+
+<button onclick="nextPage(2)">Next ➡️</button>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="page2">
+<h2>🎁 You Have A Present 🎉</h2>
+<button onclick="nextPage(3)">Open 🎁</button>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="page3">
+<p id="introText"></p>
+<button onclick="nextPage(4)">Hmm... okay ➡️</button>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page" id="page4">
+<img id="preview" class="final-img">
+<p id="message" class="final-msg"></p>
+<button onclick="nextPage(5)">Finish 💖</button>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page" id="page5">
+<h2>💖 Send this 💌</h2>
+<button onclick="generateLink()">Copy Share Link 🔗</button>
+</div>
+
+</div>
+
+<script>
+
+// Navigation
+function nextPage(n){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById("page"+n).classList.add("active");
+
+if(n===3) generateIntro();
+if(n===4){
+generateMessage();
+showImage();
+}
+}
+
+// Intro
+function generateIntro(){
+let sender = document.getElementById("sender").value || "Someone";
+let name = document.getElementById("name").value || "You";
+let relation = document.getElementById("relation").value;
+
+document.getElementById("introText").innerText =
+`Hmm... so you are ${name} 😏,
+
+the ${relation} of ${sender}...
+
+He told me to tell you something 👀💖`;
+}
+
+// Message
+function generateMessage(){
+let sender = document.getElementById("sender").value || "Someone";
+let name = document.getElementById("name").value || "You";
+let relation = document.getElementById("relation").value;
+let occasion = document.getElementById("occasion").value;
+let about = document.getElementById("about").value || "amazing";
+
+let msg = "";
+
+if(occasion==="Birthday"){
+msg=`Happy Birthday ${name}! 🎉
+
+You are ${about}. Having you as my ${relation} is the best thing ever.
+
+Stay happy always 💖
+
+— ${sender}`;
+}
+else if(occasion==="Anniversary"){
+msg=`Happy Anniversary ${name}! 💑
+
+You are ${about} and make life beautiful.
+
+— ${sender}`;
+}
+else if(occasion==="Father's Day"){
+msg=`Happy Father's Day ${name}! 👨‍👧
+
+You are ${about} and my hero.
+
+— ${sender}`;
+}
+else if(occasion==="Mother's Day"){
+msg=`Happy Mother's Day ${name}! 👩‍👧
+
+You are ${about} and my strength.
+
+— ${sender}`;
+}
+
+document.getElementById("message").innerText = msg;
+}
+
+// Image (HYBRID)
+function showImage(){
+let file = document.getElementById("photoFile").files[0];
+let url = document.getElementById("photoURL").value;
+
+if(file){
+let reader = new FileReader();
+reader.onload = function(e){
+document.getElementById("preview").src = e.target.result;
+}
+reader.readAsDataURL(file);
+}
+else if(url){
+document.getElementById("preview").src = url;
+}
+else{
+document.getElementById("preview").src = "https://via.placeholder.com/300";
+}
+}
+
+// Share link
+function generateLink(){
+let sender=encodeURIComponent(document.getElementById("sender").value);
+let name=encodeURIComponent(document.getElementById("name").value);
+let relation=encodeURIComponent(document.getElementById("relation").value);
+let occasion=encodeURIComponent(document.getElementById("occasion").value);
+let about=encodeURIComponent(document.getElementById("about").value);
+let photo=encodeURIComponent(document.getElementById("photoURL").value);
+
+let url=`${location.origin}${location.pathname}?sender=${sender}&name=${name}&relation=${relation}&occasion=${occasion}&about=${about}&photo=${photo}`;
+
+navigator.clipboard.writeText(url);
+alert("Link copied! Send it 💌");
+}
+
+// Load from link
+window.onload=function(){
+let p=new URLSearchParams(location.search);
+
+if(p.has("name")){
+document.getElementById("sender").value=p.get("sender");
+document.getElementById("name").value=p.get("name");
+document.getElementById("relation").value=p.get("relation");
+document.getElementById("occasion").value=p.get("occasion");
+document.getElementById("about").value=p.get("about");
+document.getElementById("photoURL").value=p.get("photo");
+
+nextPage(2);
+}
+}
+
+</script>
+
+</body>
+</html>
